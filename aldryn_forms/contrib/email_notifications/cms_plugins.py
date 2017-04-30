@@ -165,7 +165,20 @@ class EmailNotificationForm(FormPlugin):
             logger.exception("Could not send notification emails.")
             return []
 
-        notifications = instance.email_notifications.select_related('form')
+        # Seems to be broken... :-(
+        # https://github.com/aldryn/aldryn-forms/pull/101/commits/ba647bde1390aee6b9fb4891e62bdda241811e49
+        # notifications = instance.email_notifications.select_related('form')
+
+        # Get proxy model instance from base instance
+        try:
+            email_notification_form_plugin = EmailNotificationFormPlugin.objects.get(pk=instance.pk)
+        except EmailNotificationFormPlugin.DoesNotExist:
+            email_notification_form_plugin = None
+
+        if email_notification_form_plugin:
+            notifications = email_notification_form_plugin.email_notifications.select_related('form')
+        else:
+            notifications = EmailNotification.objects.none()
 
         emails = []
         recipients = []
