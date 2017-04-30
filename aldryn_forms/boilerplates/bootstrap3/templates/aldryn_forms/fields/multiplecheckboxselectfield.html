@@ -1,28 +1,31 @@
 {% load aldryn_forms_tags i18n %}
 
 {% if field %}
+  <div class="form-group{% if field.field.required %} form-required{% endif %}{% if field.errors %} has-error{% endif %}">
     <div class="checkbox{% if field.field.required %} form-required{% endif %}{% if field.errors %} has-error{% endif %}">
         {% block form_field_label %}
-            <p>
+            <label class="control-label">
                 {{ field.label }}
                 {% if field.field.required %}
                     <abbr title="{% trans "Required field" %}">*</abbr>
                 {% endif %}
-            </p>
+            </label>
         {% endblock form_field_label %}
         {% block form_field %}
             {% for choice in field.field.choices %}
-                <label>
-                    <input type="checkbox" value="{{ choice.0 }}" id="field-{{ choice.0 }}"
+              <div>
+                <label class="option">
+                    <input type="checkbox" value="{{ choice.0 }}" name="{{ field.name }}" id="field-{{ choice.0 }}"
                         {% if choice.0|force_text in field.value|force_text_list %} checked="checked"{% endif %}>
                     {{ choice.1 }}
                 </label>
+              </div>
             {% endfor %}
         {% endblock form_field %}
         {% block form_field_errors %}
             {% if field.errors %}
                 {% for error in field.errors %}
-                    <span class="text-danger">{{ error }}</span>
+                    <span class="text-danger pad-left">{{ error }}</span>
                 {% endfor %}
             {% endif %}
         {% endblock form_field_errors %}
@@ -32,4 +35,5 @@
             {% endif %}
         {% endblock form_field_help_text %}
     </div>
+  </div>
 {% endif %}
